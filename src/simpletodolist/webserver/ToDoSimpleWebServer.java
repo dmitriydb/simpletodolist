@@ -19,10 +19,10 @@ import simpletodolist.view.ToDoView;
  *
  * @author Dmitriy D
  */
-public class ToDoSimpleWebServer {
+public class ToDoSimpleWebServer{
     private ServerSocket serverSocket;
     private int port;
-    public static String[] response;
+    public volatile static String[] response;
     private ToDoHTMLController controller;
     private ToDoView view;
     
@@ -44,11 +44,12 @@ public class ToDoSimpleWebServer {
         }
     }
     
+    
     public void run(){
         while (true){
             try{
             Socket client = serverSocket.accept();
-                handleClientSession(client);
+                new Thread(new ServerHandler(client)).start();
             }
             catch (Exception ex){
                 ex.printStackTrace();
@@ -56,7 +57,18 @@ public class ToDoSimpleWebServer {
         }
     }
     
-    private void handleClientSession(Socket client){
+    private class ServerHandler implements Runnable{
+        
+        private Socket client;
+        ServerHandler(Socket client){
+            this.client = client;
+        }
+        
+        public void run(){
+            handleClientSession();
+        }
+        
+        private void handleClientSession(){
         try{
         
         BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -73,6 +85,9 @@ public class ToDoSimpleWebServer {
                if (resource.equals("/") || resource.equals("/index.html")){
                 System.out.println(resource);
                
+                 view = controller.getNewListView();
+           
+                
                 out.println("HTTP/1.1 200 OK");
                 out.println("");
     
@@ -135,8 +150,7 @@ public class ToDoSimpleWebServer {
                   if (resource.startsWith("/save?name=")){
                    String name = resource.substring(11);
                    String result = java.net.URLDecoder.decode(name);
-                   //System.out.println(result);
-                   
+                                 
                    ToDoHTMLEditView v = (ToDoHTMLEditView)view;
                    int index = v.getIndex();
                    controller.updateTask(index, new Task(result));
@@ -166,4 +180,7 @@ public class ToDoSimpleWebServer {
             ex.printStackTrace();
         }
     }
+    }
+    
+    
 }
