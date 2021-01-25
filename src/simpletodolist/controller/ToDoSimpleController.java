@@ -1,6 +1,7 @@
 
 package simpletodolist.controller;
 
+import simpletodolist.Task;
 import simpletodolist.view.ToDoView;
 import simpletodolist.model.ToDoModel;
  /**
@@ -22,5 +23,21 @@ public abstract class ToDoSimpleController implements ToDoController{
     public void changeModel(ToDoModel model){
         this.model = model;
     }
+    
+       
+    public void addTask(Task t) {
+        model.addTask(t);
+    }
+
+    
+    public void removeTask(int index) {
+        model.removeTask(index);
+    }
+
+    
+    public void updateTask(int index, Task newTask) {
+        model.updateTask(index, newTask);
+  }
+    
     
 }

@@ -17,21 +17,7 @@ public class ToDoConsoleController extends ToDoSimpleController{
         super(model);
     }
 
-    @Override
-    public void addTask(Task t) {
-        model.addTask(t);
-    }
-
-    @Override
-    public void removeTask(int index) {
-        model.removeTask(index);
-    }
-
-    @Override
-    public void updateTask(int index, Task newTask) {
-        model.updateTask(index, newTask);
-  }
-    
+ 
     public void handleUserInput(String line){
         
         if (line.startsWith("add")){
