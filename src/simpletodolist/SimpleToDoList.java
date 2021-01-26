@@ -31,9 +31,8 @@ public class SimpleToDoList {
         //model.addListener(cview);
         //cview.createViewFromModel();
         
-        ToDoSimpleWebServer server = new ToDoSimpleWebServer(8080);
-        server.setController(htmlController);
-        server.setView(htmlView);
+        ToDoSimpleWebServer server = new ToDoSimpleWebServer(8080, model);
+        
         server.run();
         
     }

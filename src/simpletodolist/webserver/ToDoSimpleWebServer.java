@@ -13,7 +13,9 @@ import java.net.*;
 import simpletodolist.Task;
 import simpletodolist.controller.ToDoController;
 import simpletodolist.controller.ToDoHTMLController;
+import simpletodolist.model.ToDoModel;
 import simpletodolist.view.ToDoHTMLEditView;
+import simpletodolist.view.ToDoHTMLListView;
 import simpletodolist.view.ToDoHTMLView;
 /**
  *
@@ -22,19 +24,10 @@ import simpletodolist.view.ToDoHTMLView;
 public class ToDoSimpleWebServer{
     private ServerSocket serverSocket;
     private int port;
-    private ToDoHTMLController controller;
-    private ToDoHTMLView view;
+    private ToDoModel model;
     
-    
-    public void setController(ToDoHTMLController controller){
-        this.controller = controller;
-    }
-    
-    public void setView(ToDoHTMLView view){
-        this.view = view;
-    }
-    
-    public ToDoSimpleWebServer(int port){
+    public ToDoSimpleWebServer(int port, ToDoModel model){
+        this.model = model;
         try{
         serverSocket = new ServerSocket(port);
         }
@@ -58,16 +51,24 @@ public class ToDoSimpleWebServer{
     
     private class ServerHandler implements Runnable{
         
+        private ToDoHTMLController controller;
+        private ToDoHTMLView view;
+    
+    
+
         private Socket client;
         ServerHandler(Socket client){
             this.client = client;
+            this.controller = new ToDoHTMLController(model);
+            this.view = new ToDoHTMLListView(model, controller);
+            
         }
         
         public void run(){
             handleClientSession();
         }
         
-        private void handleClientSession(){
+        private synchronized void handleClientSession(){
         try{
         
         BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -105,8 +106,8 @@ public class ToDoSimpleWebServer{
                    String result = java.net.URLDecoder.decode(name);
                    System.out.println(result);
                    controller.addTask(new Task(result));
-                 
-                  view.createViewFromModel();
+                                   
+                   view.createViewFromModel();
                    
                    out.println("HTTP/1.1 200 OK");
                    out.println("");
@@ -121,34 +122,17 @@ public class ToDoSimpleWebServer{
                else
               if (resource.startsWith("/edit")){
                   String name = resource.substring(5);
-                  view = controller.changeView(Integer.valueOf(name) - 1);
-                  System.out.println("Контроллер поменял view");
+                  this.view = controller.changeView(Integer.valueOf(name) - 1);
                   
-                  try{
-                      Thread.sleep(100);
-                  }
-                  catch (Exception ex){
-                      
-                  }
-                  System.out.println("Поспали");
-                  
-                  view.createViewFromModel();
-                  System.out.println("Запросили создать view на сервере");
+                  this.view.createViewFromModel();
                   out.println("HTTP/1.1 200 OK");
                   out.println("");
-    try{
-                      Thread.sleep(100);
-                  }
-                  catch (Exception ex){
-                      
-                  }
-                      System.out.println("Поспали");
-
+   
                   String[] response = view.getView();
-    
                   for (String line : response){
                     out.println(line);
-                }         
+                    
+              }         
                 out.close();
               }
                else
@@ -168,21 +152,19 @@ public class ToDoSimpleWebServer{
               }
               
                else
-                  if (resource.startsWith("/save?name=")){
-                   String name = resource.substring(11);
+                  if (resource.startsWith("/save")){
+                   int lastIndex = resource.indexOf("?");
+                   int index = Integer.valueOf(resource.substring(5, lastIndex));
+                   
+                   int index2 = resource.indexOf("=");
+                   String name = resource.substring(index2 + 1) ;
+                   
                    String result = java.net.URLDecoder.decode(name);
-                                 
-                   ToDoHTMLEditView v = (ToDoHTMLEditView)view;
-                   int index = v.getIndex();
-                   controller.updateTask(index, new Task(result));
+                            
+                   System.out.println(index +":" + result);
+                   controller.updateTask(index - 1, new Task(result));
                    
                    view = controller.getNewListView();
-                   try{
-                      Thread.sleep(100);
-                  }
-                  catch (Exception ex){
-                      
-                  }
                    view.createViewFromModel();
                    
                    out.println("HTTP/1.1 200 OK");
