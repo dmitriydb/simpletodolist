@@ -24,6 +24,7 @@ public class ToDoHTMLController extends ToDoSimpleController{
     
     public ToDoHTMLListView getNewListView(){
         ToDoHTMLListView newView = new ToDoHTMLListView(model, this);
+        newView.createViewFromModel();
         return newView;
     }
     

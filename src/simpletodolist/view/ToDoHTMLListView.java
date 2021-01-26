@@ -13,17 +13,15 @@ import simpletodolist.webserver.ToDoSimpleWebServer;
  *
  * @author Dmitriy D
  */
-public class ToDoHTMLListView extends ToDoView{
+public class ToDoHTMLListView extends ToDoHTMLView{
     
     public ToDoHTMLListView(ToDoModel model, ToDoController controller ){
         super(model, controller);
     }
     
-    public void createViewFromModel(){
-        
-        
+    public synchronized void createViewFromModel(){  
         try{
-        ArrayList<String> page = new ArrayList<String>();
+        page = new ArrayList<String>();
         BufferedReader in = new BufferedReader(new FileReader("html/index.html"));
             String line;
             while ((line = in.readLine()) != null){
@@ -46,15 +44,9 @@ public class ToDoHTMLListView extends ToDoView{
               "</tr>\n");
                 counter++;
                }
-               
-                }
-               
-            }
+           }        
+         }
             in.close();
-            String[] response = new String[page.size()];
-            page.toArray(response);
-            ToDoSimpleWebServer.response = response;
-            
         }
         catch (Exception ex){
             ex.printStackTrace();
@@ -65,6 +57,7 @@ public class ToDoHTMLListView extends ToDoView{
     
     public void update(){
         
+        createViewFromModel();
     }
     
 }

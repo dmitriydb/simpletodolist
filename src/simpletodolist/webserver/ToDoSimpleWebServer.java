@@ -14,7 +14,7 @@ import simpletodolist.Task;
 import simpletodolist.controller.ToDoController;
 import simpletodolist.controller.ToDoHTMLController;
 import simpletodolist.view.ToDoHTMLEditView;
-import simpletodolist.view.ToDoView;
+import simpletodolist.view.ToDoHTMLView;
 /**
  *
  * @author Dmitriy D
@@ -22,16 +22,15 @@ import simpletodolist.view.ToDoView;
 public class ToDoSimpleWebServer{
     private ServerSocket serverSocket;
     private int port;
-    public volatile static String[] response;
     private ToDoHTMLController controller;
-    private ToDoView view;
+    private ToDoHTMLView view;
     
     
     public void setController(ToDoHTMLController controller){
         this.controller = controller;
     }
     
-    public void setView(ToDoView view){
+    public void setView(ToDoHTMLView view){
         this.view = view;
     }
     
@@ -85,13 +84,12 @@ public class ToDoSimpleWebServer{
                if (resource.equals("/") || resource.equals("/index.html")){
                 System.out.println(resource);
                
-                 view = controller.getNewListView();
-           
-                
+                view = controller.getNewListView();
+                view.createViewFromModel();
                 out.println("HTTP/1.1 200 OK");
                 out.println("");
     
-                view.createViewFromModel();
+                String[] response = view.getView();
                 
                 for (String line : response){
                     out.println(line);
@@ -108,11 +106,13 @@ public class ToDoSimpleWebServer{
                    System.out.println(result);
                    controller.addTask(new Task(result));
                  
+                  view.createViewFromModel();
+                   
                    out.println("HTTP/1.1 200 OK");
                    out.println("");
     
-                   view.createViewFromModel();
-                
+                String[] response = view.getView();
+               
                 for (String line : response){
                     out.println(line);
                 }         
@@ -122,10 +122,30 @@ public class ToDoSimpleWebServer{
               if (resource.startsWith("/edit")){
                   String name = resource.substring(5);
                   view = controller.changeView(Integer.valueOf(name) - 1);
+                  System.out.println("Контроллер поменял view");
                   
+                  try{
+                      Thread.sleep(100);
+                  }
+                  catch (Exception ex){
+                      
+                  }
+                  System.out.println("Поспали");
+                  
+                  view.createViewFromModel();
+                  System.out.println("Запросили создать view на сервере");
                   out.println("HTTP/1.1 200 OK");
                   out.println("");
-                  
+    try{
+                      Thread.sleep(100);
+                  }
+                  catch (Exception ex){
+                      
+                  }
+                      System.out.println("Поспали");
+
+                  String[] response = view.getView();
+    
                   for (String line : response){
                     out.println(line);
                 }         
@@ -140,6 +160,7 @@ public class ToDoSimpleWebServer{
                   out.println("HTTP/1.1 200 OK");
                   out.println("");
                   
+                  String[] response = view.getView();
                   for (String line : response){
                     out.println(line);
                 }         
@@ -156,23 +177,26 @@ public class ToDoSimpleWebServer{
                    controller.updateTask(index, new Task(result));
                    
                    view = controller.getNewListView();
-                   
+                   try{
+                      Thread.sleep(100);
+                  }
+                  catch (Exception ex){
+                      
+                  }
+                   view.createViewFromModel();
                    
                    out.println("HTTP/1.1 200 OK");
                    out.println("");
     
-                   view.createViewFromModel();
-                
-                for (String line : response){
+                    String[] response = view.getView();
+                    for (String line : response){
                     out.println(line);
                 }         
                 out.close();
                }
                
            }
-        
-             //      System.out.println(c);
-             
+           
         }
         in.close();
         }

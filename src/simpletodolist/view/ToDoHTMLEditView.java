@@ -13,7 +13,7 @@ import simpletodolist.webserver.ToDoSimpleWebServer;
  *
  * @author Dmitriy D
  */
-public class ToDoHTMLEditView extends ToDoView{
+public class ToDoHTMLEditView extends ToDoHTMLView{
     
     private int editingIndex;
     
@@ -26,11 +26,12 @@ public class ToDoHTMLEditView extends ToDoView{
         return editingIndex;
     }
     
-    public void createViewFromModel(){
+    public synchronized void createViewFromModel(){
         
+        System.out.println("Начинаем создавать view");
         
         try{
-        ArrayList<String> page = new ArrayList<String>();
+        page = new ArrayList<String>();
         BufferedReader in = new BufferedReader(new FileReader("html/edit.html"));
             String line;
             while ((line = in.readLine()) != null){
@@ -43,10 +44,8 @@ public class ToDoHTMLEditView extends ToDoView{
                 }
             }
             in.close();
-            String[] response = new String[page.size()];
-            page.toArray(response);
-            ToDoSimpleWebServer.response = response;
-            
+            System.out.println("Закончили создавать view");
+        
         }
         catch (Exception ex){
             ex.printStackTrace();
@@ -56,7 +55,7 @@ public class ToDoHTMLEditView extends ToDoView{
     }
     
     public void update(){
-        
+        createViewFromModel();
     }
     
 }
