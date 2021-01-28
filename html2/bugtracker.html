@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="style/style.css">
+     <meta charset="UTF-8">
+</head>
+<body>
+<header>
+  <div>
+  <h1>Simple bugtracker</h1>
+</div>
+</header>
+<section id="navbar">
+<table>
+<tr>
+  <th><a href="index.html">Updates</a></th>
+  <th><a href="todolist.html">TODO List</a></th>
+  <th><a href="notes.html">Notes</a></th>
+  <th><a href="bugtracker.html">Bugtracker</a></th>
+</tr>
+</table>
+</section>
+
+<section>
+<table id="bugtrackerTable">
+  <td class="projects">
+    <article class=project>
+      <a href="/changeproject1"><p>Project 1</p></a>
+    </article>
+    <article class=list>
+      <a href="/changeproject2"><p>Project 2</p></a>
+    </article><article class=list>
+      <a href="/changeproject3"><p>Project 3</p></a>
+    </article><article class=list>
+      <a href="/changeproject4"><p>Project 4</p></a>
+    </article>
+    <form action="/addproject" method="post">
+      <input type="text" name = "projectname">
+      <input type="submit" value="Add project">
+    </form>
+  </td>
+  <td class="issues">
+     <article class=issue>
+        <a href="issue1.html"><p>Issue#1: Null Pointer Exception at line 210. <br> Status: <span style="color:red"><strong>not fixed</strong></span></p></a>
+     </article>
+     <article class=issue>
+        <a href="issue2.html"><p>Issue#2: Null Pointer Exception at line 227. <br> Status: <span style="color:green"><strong>fixed</strong></span></p></a>
+     </article>
+
+
+     <form action="/addissue" method="post">
+      <textarea name = "issue" rows="5" cols ="100"></textarea><br>
+      <input type="submit" value="Add new issue">
+     </form>
+
+  </td>
+</table>
+</section>
+
+<footer>
+</footer>
+</body>
+</html
