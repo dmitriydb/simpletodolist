@@ -3,6 +3,7 @@ package simpletodolist.model;
 
 import simpletodolist.Task;
 import java.util.*;
+import simpletodolist.Item;
 import simpletodolist.ModelChangeListener;
 
 /**
@@ -11,10 +12,10 @@ import simpletodolist.ModelChangeListener;
  */
 public class ToDoSimpleModel implements ToDoModel{
     private LinkedList<ModelChangeListener> modelListeners;
-    private ArrayList<Task> taskList;
+    private ArrayList<Item> itemList;
     
     public ToDoSimpleModel(){
-        taskList = new ArrayList<Task>();
+        itemList = new ArrayList<Item>();
         modelListeners = new LinkedList<ModelChangeListener>();
     }
     
@@ -28,30 +29,30 @@ public class ToDoSimpleModel implements ToDoModel{
         }
     } 
     
-    public void addTask(Task t){
-        taskList.add(t);
+    public void addItem(Item t){
+        itemList.add(t);
         notifyAllListeners();
     }
     
-    public void removeTask (Task t){
-        taskList.remove(t);
+    public void removeItem (Item t){
+        itemList.remove(t);
         notifyAllListeners();
     }
 
-    public void removeTask (int index){
-        taskList.remove(taskList.get(index));
+    public void removeItem (int index){
+        itemList.remove(itemList.get(index));
         notifyAllListeners();
     }
 
     
-    public void updateTask (int index, Task newTask){
-        taskList.set(index, newTask);
+    public void updateItem (int index, Item newItem){
+        itemList.set(index, newItem);
         notifyAllListeners();
     }
     
-    public Task[] getTasks(){
-        Task[] array = new Task[taskList.size()];
-        taskList.toArray(array);
+    public Item[] getItems(){
+        Item[] array = new Item[itemList.size()];
+        itemList.toArray(array);
         return array;
     }
     

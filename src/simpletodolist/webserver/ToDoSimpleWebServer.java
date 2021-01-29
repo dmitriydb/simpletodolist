@@ -10,13 +10,17 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import simpletodolist.Task;
 import simpletodolist.controller.ToDoController;
 import simpletodolist.controller.ToDoHTMLController;
 import simpletodolist.model.ToDoModel;
-import simpletodolist.view.ToDoHTMLEditView;
-import simpletodolist.view.ToDoHTMLListView;
-import simpletodolist.view.ToDoHTMLView;
+import simpletodolist.view.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
+
 /**
  *
  * @author Dmitriy D
@@ -60,7 +64,7 @@ public class ToDoSimpleWebServer{
         ServerHandler(Socket client){
             this.client = client;
             this.controller = new ToDoHTMLController(model);
-            this.view = new ToDoHTMLListView(model, controller);
+            this.view = new UpdatesView(model, controller);
             
         }
         
@@ -68,57 +72,114 @@ public class ToDoSimpleWebServer{
             handleClientSession();
         }
         
-        private synchronized void handleClientSession(){
-        try{
-        
-        BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-        String c;
-        OutputStream os = client.getOutputStream();
+        private synchronized void showView(ToDoHTMLView view){
+           
+            try{
+          
+         OutputStream os = client.getOutputStream();
         PrintStream out = new PrintStream(os);
-        
-        
-        while ((c = in.readLine()) != null){
-           if (c.startsWith("GET")){
-               String[] tokens = c.split(" ");
-               String resource = tokens[1];
-               
-               if (resource.equals("/") || resource.equals("/index.html")){
-                System.out.println(resource);
-               
-                view = controller.getNewListView();
-                view.createViewFromModel();
-                out.println("HTTP/1.1 200 OK");
-                out.println("");
+         this.view = view;
+         view.createViewFromModel();
+        out.println("HTTP/1.1 200 OK");
+        out.println("");
     
-                String[] response = view.getView();
                 
+                String[] response = view.getView();
+              
                 for (String line : response){
                     out.println(line);
                 }
-                
-               
                 out.close();
-               }
-               else
+                os.close();
+               client.close();
                
-               if (resource.startsWith("/add?name=")){
-                   String name = resource.substring(10);
-                   String result = java.net.URLDecoder.decode(name);
-                   System.out.println(result);
-                   controller.addTask(new Task(result));
-                                   
-                   view.createViewFromModel();
-                   
-                   out.println("HTTP/1.1 200 OK");
-                   out.println("");
+            }
+            catch (Exception ex){
+                ex.printStackTrace();
+            }
+           
+            
+            
+        }
+        
+        private synchronized void handleClientSession(){
+        try{
+        BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+        
+        String c;
     
-                String[] response = view.getView();
+        boolean ispost=false;
+        int contentL = 0;
+        while ((c = in.readLine()) != null && (c.length() != 0)) {
+            
+            
+           if (c.startsWith("GET")){
+               String[] tokens = c.split(" ");
+               String resource = tokens[1];
+             
+               if (resource.equals("/") || resource.equals("/index.html"))
+                   showView(new UpdatesView(model, controller));
+                else
+              
+               if (resource.equals("/notes.html"))
+                   showView(new NotesView(model, controller));
+                else
+               if (resource.equals("/bugtracker.html"))
+                   showView(new IssuesView(model, controller));
+                else
+                         if (resource.equals("/todolist.html"))
+                   showView(new TasksView(model, controller));
                
-                for (String line : response){
-                    out.println(line);
-                }         
-                out.close();
+               break;
                }
+            
+           else
+                 if (c.startsWith("POST")){
+                     System.out.println(c);
+                     ispost=true;
+                 }
+           else
+                     if (c.startsWith("Content-Length")){
+                         String[] x= c.split(":");
+                         contentL = Integer.valueOf(x[1].trim());
+                         System.out.println(contentL);
+                     }
+           
+           
+           if (ispost)
+                System.out.println(c);
+
+        }
+        
+        
+       if (ispost){
+    
+          //code to read the post payload data
+StringBuilder payload = new StringBuilder();
+        while(in.ready()){
+            payload.append((char) in.read());
+            }
+        String coded = new String(payload);
+        System.out.println(URLDecoder.decode(coded));
+       }
+       in.close();
+        }
+        
+        catch (IOException ex){
+            ex.printStackTrace();
+        }
+    }
+           private String encodeValue(String value) {
+        try {
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex.getCause());
+        }
+    }
+    }
+    
+   }
+   /*
                else
               if (resource.startsWith("/edit")){
                   String name = resource.substring(5);
@@ -135,22 +196,7 @@ public class ToDoSimpleWebServer{
               }         
                 out.close();
               }
-               else
-              if (resource.startsWith("/remove")){
-                  String name = resource.substring(7);
-                   String result = java.net.URLDecoder.decode(name);
-                  controller.removeTask(Integer.valueOf(result) - 1);
-                  view.createViewFromModel();
-                  out.println("HTTP/1.1 200 OK");
-                  out.println("");
-                  
-                  String[] response = view.getView();
-                  for (String line : response){
-                    out.println(line);
-                }         
-                out.close();
-              }
-              
+             
                else
                   if (resource.startsWith("/save")){
                    int lastIndex = resource.indexOf("?");
@@ -175,18 +221,5 @@ public class ToDoSimpleWebServer{
                     out.println(line);
                 }         
                 out.close();
-               }
-               
-           }
-           
-        }
-        in.close();
-        }
-        catch (IOException ex){
-            ex.printStackTrace();
-        }
-    }
-    }
-    
-    
-}
+               }*/
+        

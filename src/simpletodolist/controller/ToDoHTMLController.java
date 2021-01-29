@@ -3,8 +3,7 @@ package simpletodolist.controller;
 
 import simpletodolist.Task;
 import simpletodolist.model.ToDoModel;
-import simpletodolist.view.ToDoHTMLEditView;
-import simpletodolist.view.ToDoHTMLListView;
+import simpletodolist.view.*;
 
 /**
  *
@@ -22,10 +21,19 @@ public class ToDoHTMLController extends ToDoSimpleController{
         return newView;
     }
     
-    public ToDoHTMLListView getNewListView(){
-        ToDoHTMLListView newView = new ToDoHTMLListView(model, this);
+    public UpdatesView getNewUpdatesView(){
+        UpdatesView newView = new UpdatesView(model, this);
         newView.createViewFromModel();
         return newView;
     }
+    
+  
+    
+    public TasksView getNewTasksView(){
+        TasksView newView = new TasksView(model, this);
+        newView.createViewFromModel();
+        return newView;
+    }
+    
     
 }

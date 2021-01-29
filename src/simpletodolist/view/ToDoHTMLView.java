@@ -14,7 +14,6 @@ public abstract class ToDoHTMLView extends ToDoView{
     protected volatile ArrayList<String> page;
     
     public synchronized String[] getView(){
-        System.out.println("Вызов getView!");
         return page.toArray(new String[page.size()]);
     }
     

@@ -1,6 +1,7 @@
 
 package simpletodolist.model;
 
+import simpletodolist.Item;
 import simpletodolist.Task;
 
 /**
@@ -8,9 +9,9 @@ import simpletodolist.Task;
  * @author Dmitriy D
  */
 public interface ToDoModel {
-    public void addTask (Task t);
-    public void removeTask (Task t);
-    public void removeTask (int index);
-    public void updateTask (int index, Task newTask);
-    public Task[] getTasks();
+    public void addItem (Item t);
+    public void removeItem (Item t);
+    public void removeItem (int index);
+    public void updateItem (int index, Item newItem);
+    public Item[] getItems();
 }

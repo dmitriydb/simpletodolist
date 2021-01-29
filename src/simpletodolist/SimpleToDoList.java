@@ -1,11 +1,9 @@
 
 package simpletodolist;
 
-import simpletodolist.controller.ToDoConsoleController;
 import simpletodolist.controller.ToDoHTMLController;
 import simpletodolist.model.ToDoSimpleModel;
-import simpletodolist.view.ToDoConsoleListView;
-import simpletodolist.view.ToDoHTMLListView;
+import simpletodolist.view.*;
 import simpletodolist.webserver.ToDoSimpleWebServer;
 
 /**
@@ -19,11 +17,16 @@ public class SimpleToDoList {
      */
     public static void main(String[] args) {
         ToDoSimpleModel model = new ToDoSimpleModel();
-        model.addTask(new Task("Task 1"));
-        model.addTask(new Task("Task 2"));
+        model.addItem(new Task("Task 1"));
+        model.addItem(new Task("Task 2"));
+        model.addItem(new Issue("Issue 1", false));
+        model.addItem(new Issue("Issue 2", true));
+        model.addItem(new Note("Note tutle1", "fgfdkjghdfkghdfkg"));
+        model.addItem(new Note("Note title2","fghdfjgh"));
+        
             
         ToDoHTMLController htmlController = new ToDoHTMLController(model);
-        ToDoHTMLListView htmlView = new ToDoHTMLListView(model, htmlController);
+        UpdatesView htmlView = new UpdatesView(model, htmlController);
         model.addListener(htmlView);
         
         //ToDoConsoleController controller = new ToDoConsoleController(model);
