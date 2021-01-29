@@ -8,8 +8,18 @@ package simpletodolist;
 public class Note extends Item{
     
     private String title;
+    
+    public String getTitle(){
+        return title;
+    }
+    
     public Note(String title, String text){
         super(text);
+        this.title = title;
+    }
+    
+    public Note(int id, String title, String text, String time){
+        super(id, text, time);
         this.title = title;
     }
     
@@ -36,7 +46,7 @@ public class Note extends Item{
   public String[] toUpdate(){
           return new String[]{
               "<article class=\"updateItem\">",
-   "<a href=\"update"+id+".html\"><p>New note added: " +title+ "<br><br>",
+   "<a href=\"note"+id+".html\"><p>New note added: " +title+ "<br><br>",
     "<sub>"+timeStamp+"<sub></p></a>",
   "</article>"};
     

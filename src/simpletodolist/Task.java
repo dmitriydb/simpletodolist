@@ -12,6 +12,11 @@ public class Task extends Item{
         super(text);
     }
     
+    public Task(int id, String text, String time){
+        super(id, text, time);
+ 
+    }
+   
     
     public String[] toHTML(){
      return new String[]{
@@ -34,7 +39,7 @@ public class Task extends Item{
     public String[] toUpdate(){
           return new String[]{
               "<article class=\"updateItem\">",
-   "<a href=\"update"+id+".html\"><p>Task#"+id+" added: " +text+ "<br><br>",
+   "<a href=\"task"+id+".html\"><p>Task#"+id+" added: " +text+ "<br><br>",
     "<sub>"+timeStamp+"<sub></p></a>",
   "</article>"};
     

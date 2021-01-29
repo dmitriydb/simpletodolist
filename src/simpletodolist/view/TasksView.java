@@ -5,54 +5,70 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import simpletodolist.Item;
 import simpletodolist.Task;
+import simpletodolist.TodoList;
 import simpletodolist.controller.ToDoController;
 import simpletodolist.model.ToDoModel;
-import simpletodolist.webserver.ToDoSimpleWebServer;
 
 /**
  *
  * @author Dmitriy D
  */
-public class TasksView extends ToDoHTMLView{
+public class TasksView extends ToDoHTMLView {
+
+    private int listID = -1;
     
-    public TasksView(ToDoModel model, ToDoController controller ){
+    public TasksView(ToDoModel model, ToDoController controller) {
         super(model, controller);
+        listID = model.getFirstListID();
     }
     
-    public synchronized void createViewFromModel(){  
-        try{
-        page = new ArrayList<String>();
-        BufferedReader in = new BufferedReader(new FileReader("html/todolist.html"));
+    public TasksView(int listID, ToDoModel model, ToDoController controller) {
+        super(model, controller);
+        this.listID = listID;
+    }
+    
+    
+
+    public synchronized void createViewFromModel() {
+        try {
+            page = new ArrayList<String>();
+            BufferedReader in = new BufferedReader(new FileReader("html/todolist.html"));
             String line;
-            while ((line = in.readLine()) != null){
-           
-                if (!line.startsWith("#list"))
-                    page.add(line +"\n");
-               else
-                {
-               int counter = 1;
-               for (Item t : model.getItems()){
-                if (t instanceof Task){
-                for (String line2 : t.toFullHTML())
-                    page.add(line2 + "\n");
+            while ((line = in.readLine()) != null) {
+                line = line.replace("#listnum", String.valueOf(listID));
                 
-                counter++;
+                
+                if (line.startsWith("#listlist")) {
+                    for (TodoList p : model.getLists()) {
+
+                        for (String line2 : p.toHTML()) {
+                            page.add(line2 + "\n");
+                        }
+                    }
+                } else if (line.startsWith("#list")) {
+                    
+                    for (Task t : model.getTasksFromList(listID)) {
+                        
+                            for (String line2 : t.toFullHTML()) {
+                                page.add(line2 + "\n");
+                            }
+
+                        
+                    }
+                } else {
+                    page.add(line + "\n");
+
                 }
-               }
-           }        
-         }
+            }
             in.close();
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
-        
+
     }
-    
-    public void update(){
-        
+
+    public void update() {
         createViewFromModel();
     }
-    
+
 }

@@ -12,11 +12,15 @@ public class TodoList extends Item{
         super(text);
     }
     
+     public TodoList(int id, String text){
+        super(id, text);
+    }
+    
     
     public String[] toHTML(){
     
         return new String[]{  
-            "<article class=list>",
+     "<article class=list>",
       "<a href=\"/changelist"+id+"\"><p>"+text+"</p></a>",
    " </article>"};      
     }

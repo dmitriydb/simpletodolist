@@ -22,6 +22,8 @@ import java.nio.charset.StandardCharsets;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import simpletodolist.Issue;
+import simpletodolist.Note;
 
 /**
  *
@@ -106,6 +108,7 @@ public class ToDoSimpleWebServer{
         
         private synchronized void handleClientSession(){
         try{
+            System.out.println("Новый клиент " + client.getInetAddress());
         BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
         
         String c;
@@ -149,6 +152,17 @@ public class ToDoSimpleWebServer{
                   String name = resource.substring(5, resource.indexOf('.'));
                 showView(new NoteView(Integer.valueOf(name) - 1, model, controller));
               }
+               else
+                 if (resource.startsWith("/changelist")){
+             String name = resource.substring(11);
+             showView(new TasksView(Integer.valueOf(name), model, controller));
+              }
+               else
+                   if (resource.startsWith("/changeproject")){
+             String name = resource.substring(14);
+             showView(new IssuesView(Integer.valueOf(name), model, controller));
+              }
+             
                
                break;
                }
@@ -165,13 +179,8 @@ public class ToDoSimpleWebServer{
                          contentL = Integer.valueOf(x[1].trim());
                          System.out.println(contentL);
                      }
-           
-           
-          
 
         }
-        
-        
        if (ispost){
     
        StringBuilder payload = new StringBuilder();
@@ -193,6 +202,34 @@ public class ToDoSimpleWebServer{
             model.addProject(postFieldsMap.get("projectname"));
             showView(new IssuesView(model, controller));
         }
+        else
+        if (postResource.equals("/addlist")){
+            model.addList(postFieldsMap.get("listname"));
+            showView(new TasksView(model, controller));
+        }
+        
+        else
+         if (postResource.equals("/addnote")){
+             String title = postFieldsMap.get("title");
+             String text = postFieldsMap.get("note");
+             model.addItem(new Note(title, text));
+            showView(new NotesView(model, controller));
+        }
+         else
+         if (postResource.startsWith("/addtask")){
+             int index = Integer.valueOf(postResource.substring(8));
+             String text = postFieldsMap.get("task");
+             model.addItemToList(new Task(text), index);
+            showView(new TasksView(index, model, controller));
+        }
+        else
+         if (postResource.startsWith("/addissue")){
+             int index = Integer.valueOf(postResource.substring(9));
+             String text = postFieldsMap.get("issue");
+             model.addItemToList(new Issue(text, false), index);
+            showView(new IssuesView(index, model, controller));
+        }
+         
         
        }
        in.close();
@@ -216,47 +253,3 @@ public class ToDoSimpleWebServer{
     }
     
    }
-   /*
-               else
-              if (resource.startsWith("/edit")){
-                  String name = resource.substring(5);
-                  this.view = controller.changeView(Integer.valueOf(name) - 1);
-                  
-                  this.view.createViewFromModel();
-                  out.println("HTTP/1.1 200 OK");
-                  out.println("");
-   
-                  String[] response = view.getView();
-                  for (String line : response){
-                    out.println(line);
-                    
-              }         
-                out.close();
-              }
-             
-               else
-                  if (resource.startsWith("/save")){
-                   int lastIndex = resource.indexOf("?");
-                   int index = Integer.valueOf(resource.substring(5, lastIndex));
-                   
-                   int index2 = resource.indexOf("=");
-                   String name = resource.substring(index2 + 1) ;
-                   
-                   String result = java.net.URLDecoder.decode(name);
-                            
-                   System.out.println(index +":" + result);
-                   controller.updateTask(index - 1, new Task(result));
-                   
-                   view = controller.getNewListView();
-                   view.createViewFromModel();
-                   
-                   out.println("HTTP/1.1 200 OK");
-                   out.println("");
-    
-                    String[] response = view.getView();
-                    for (String line : response){
-                    out.println(line);
-                }         
-                out.close();
-               }*/
-        

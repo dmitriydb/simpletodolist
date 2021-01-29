@@ -10,17 +10,19 @@ import java.util.Calendar;
  */
 public abstract class Item {
     protected String text = "nothing";
-    protected String timeStamp = "not set";
+    protected String timeStamp = null;
     protected int id = -1;
     
     public void setText(String text) {
         this.text = text;
        
     }
-
-    protected void updateTimeStamp(){
-        timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
+    
+    
+    public int getID(){
+        return id;
     }
+    
     public String getText() {
         return text;
     }
@@ -28,15 +30,27 @@ public abstract class Item {
     public Item (int id, String text){
        this.id = id;
         this.text = text;
-         updateTimeStamp();
+        
+    }
+    
+     public Item (int id, String text, String timeStamp){
+       this.id = id;
+        this.text = text;
+        this.timeStamp = timeStamp;
     }
   
       public Item (String text){
-       this.id = id;
         this.text = text;
-         updateTimeStamp();
+       
     }
     
+      public String getTimeStamp(){
+          return timeStamp;
+      }
+      
+      public void setTimeStamp(String timeStamp){
+          this.timeStamp = timeStamp;
+      }
     
     public abstract String[] toUpdate();
     public abstract String[] toFullHTML();

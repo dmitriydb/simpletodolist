@@ -9,62 +9,67 @@ import simpletodolist.controller.ToDoController;
 import simpletodolist.model.ToDoModel;
 import simpletodolist.webserver.ToDoSimpleWebServer;
 import simpletodolist.*;
+
 /**
  *
  * @author Dmitriy D
  */
-public class IssuesView extends ToDoHTMLView{
+public class IssuesView extends ToDoHTMLView {
+
+    private int projectID = -1;
     
-    public IssuesView(ToDoModel model, ToDoController controller ){
+    public IssuesView(ToDoModel model, ToDoController controller) {
         super(model, controller);
+        projectID = model.getFirstProjectID();
     }
     
-    public synchronized void createViewFromModel(){  
-        try{
-        page = new ArrayList<String>();
-        BufferedReader in = new BufferedReader(new FileReader("html/bugtracker.html"));
+    public IssuesView(int projectID, ToDoModel model, ToDoController controller) {
+        super(model, controller);
+        this.projectID = projectID;
+    }
+    
+
+    public synchronized void createViewFromModel() {
+        try {
+            page = new ArrayList<String>();
+            BufferedReader in = new BufferedReader(new FileReader("html/bugtracker.html"));
             String line;
-            while ((line = in.readLine()) != null){
-           
-                if (line.startsWith("#list")){
-                    
-                    
-                 for (Item t : model.getItems()){
-                if (t instanceof Issue){
-                for (String line2 : t.toFullHTML())
-                    page.add(line2 + "\n");
-               
-                }
-                 }
-                }   
-               
-                else
-                    if (line.startsWith("#projectlist")){
-                         for (Project p : model.getProjects()){
-               
-                for (String line2 : p.toHTML())
-                    page.add(line2 + "\n");
-                         }
+            while ((line = in.readLine()) != null) {
+
+                line = line.replace("#listnum", String.valueOf(projectID));
+                
+                if (line.startsWith("#list")) {
+
+                    for (Item t : model.getIssuesFromProject(projectID)) {
+                            for (String line2 : t.toFullHTML()) {
+                                page.add(line2 + "\n");
+                            }
+
+                        
                     }
-                         
-                else
-                    page.add(line +"\n");
-      
-         
-        }
+                } else if (line.startsWith("#projectlist")) {
+                    for (Project p : model.getProjects()) {
+
+                        for (String line2 : p.toHTML()) {
+                            page.add(line2 + "\n");
+                        }
+                    }
+                } else {
+                    page.add(line + "\n");
+                }
+
+            }
             in.close();
-        
-        } 
-        catch (Exception ex){
+
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
-        
+
     }
-    
-    public void update(){
-        
+
+    public void update() {
+
         createViewFromModel();
     }
-    
+
 }

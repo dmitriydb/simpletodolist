@@ -14,6 +14,16 @@ public class Issue extends Item{
         this.status = status;
     }
     
+     public Issue(int id, String text, String time, boolean status){
+        super(id, text, time);
+        this.status = status;
+    }
+     
+     public boolean getStatus(){
+         return status;
+     }
+    
+    
     
     public String[] toHTML(){
      String st = status?"fixed":"not fixed";
@@ -40,8 +50,6 @@ public class Issue extends Item{
    "<a href=\"update"+id+".html\"><p>New issue added: " +text+ "<br><br>",
     "<sub>"+timeStamp+"<sub></p></a>",
   "</article>"};
-    
- 
     }
     
 }
