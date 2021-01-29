@@ -33,7 +33,7 @@ public class NotesView extends ToDoHTMLView{
                int counter = 1;
                for (Item t : model.getItems()){
                 if (t instanceof Note){
-                for (String line2 : t.toFullHTML(counter))
+                for (String line2 : t.toFullHTML())
                     page.add(line2 + "\n");
                 
                 counter++;

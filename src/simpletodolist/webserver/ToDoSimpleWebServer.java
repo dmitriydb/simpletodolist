@@ -20,6 +20,8 @@ import simpletodolist.view.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -107,12 +109,13 @@ public class ToDoSimpleWebServer{
         BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
         
         String c;
-    
+        String postResource = null;
+        
         boolean ispost=false;
         int contentL = 0;
         while ((c = in.readLine()) != null && (c.length() != 0)) {
-            
-            
+       
+          
            if (c.startsWith("GET")){
                String[] tokens = c.split(" ");
                String resource = tokens[1];
@@ -130,13 +133,31 @@ public class ToDoSimpleWebServer{
                          if (resource.equals("/todolist.html"))
                    showView(new TasksView(model, controller));
                
+                 else  if (resource.startsWith("/update")){
+                  String name = resource.substring(7, resource.indexOf('.'));
+                showView(new UpdateView(Integer.valueOf(name) - 1, model, controller));
+              }
+                 else  if (resource.startsWith("/task")){
+                  String name = resource.substring(5, resource.indexOf('.'));
+                showView(new TaskView(Integer.valueOf(name) - 1, model, controller));
+              }
+                 else  if (resource.startsWith("/issue")){
+                  String name = resource.substring(6, resource.indexOf('.'));
+                showView(new IssueView(Integer.valueOf(name) - 1, model, controller));
+              }
+                 else  if (resource.startsWith("/note")){
+                  String name = resource.substring(5, resource.indexOf('.'));
+                showView(new NoteView(Integer.valueOf(name) - 1, model, controller));
+              }
+               
                break;
                }
             
            else
                  if (c.startsWith("POST")){
-                     System.out.println(c);
                      ispost=true;
+                     String[] tokens = c.split(" ");
+                     postResource = tokens[1];
                  }
            else
                      if (c.startsWith("Content-Length")){
@@ -146,30 +167,46 @@ public class ToDoSimpleWebServer{
                      }
            
            
-           if (ispost)
-                System.out.println(c);
+          
 
         }
         
         
        if (ispost){
     
-          //code to read the post payload data
-StringBuilder payload = new StringBuilder();
+       StringBuilder payload = new StringBuilder();
         while(in.ready()){
             payload.append((char) in.read());
             }
         String coded = new String(payload);
-        System.out.println(URLDecoder.decode(coded));
+        String result = URLDecoder.decode(coded);
+        Map<String,String> postFieldsMap = new HashMap<String, String>();
+        String postFields[] = result.trim().split("&");
+        for (String postField : postFields){
+            String[] values = postField.split("=");
+            String key = values[0].trim();
+            String value = values[1].trim();
+            postFieldsMap.put(key, value);
+        }
+        System.out.println(postFieldsMap);
+        if (postResource.equals("/addproject")){
+            model.addProject(postFieldsMap.get("projectname"));
+            showView(new IssuesView(model, controller));
+        }
+        
        }
        in.close();
+       
+       
         }
         
         catch (IOException ex){
             ex.printStackTrace();
         }
     }
-           private String encodeValue(String value) {
+      
+        
+        private String encodeValue(String value) {
         try {
             return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
         } catch (UnsupportedEncodingException ex) {

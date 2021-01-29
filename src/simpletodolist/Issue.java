@@ -15,7 +15,7 @@ public class Issue extends Item{
     }
     
     
-    public String[] toHTML(int id){
+    public String[] toHTML(){
      String st = status?"fixed":"not fixed";
         return new String[]{   
      "<article class=issue>",
@@ -23,20 +23,18 @@ public class Issue extends Item{
      "</article>"
     };
         
-        
-        
 }
    
-      public String[] toFullHTML(int id){
+      public String[] toFullHTML(){
      String st = status?"<span style=\"color:green\"><strong>fixed</strong></span>":"<span style=\"color:red\"><strong>not fixed</strong></span>";
         return new String[]{   
-        "<article class=\"issue\">",
+        "<article class=issue>",
         "<a href=\"issue"+id+".html\"><p>Issue#"+id+": " +getText()+"<br> Status: "+st+"</p></a>",
      "</article>"
     };
       }
       
-      public String[] toUpdate(int id){
+      public String[] toUpdate(){
           return new String[]{
               "<article class=\"updateItem\">",
    "<a href=\"update"+id+".html\"><p>New issue added: " +text+ "<br><br>",

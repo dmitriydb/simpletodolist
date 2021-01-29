@@ -22,27 +22,39 @@ public class IssuesView extends ToDoHTMLView{
     public synchronized void createViewFromModel(){  
         try{
         page = new ArrayList<String>();
-        BufferedReader in = new BufferedReader(new FileReader("html/notes.html"));
+        BufferedReader in = new BufferedReader(new FileReader("html/bugtracker.html"));
             String line;
             while ((line = in.readLine()) != null){
            
-                if (!line.startsWith("#list"))
-                    page.add(line +"\n");
-               else
-                {
-               int counter = 1;
-               for (Item t : model.getItems()){
+                if (line.startsWith("#list")){
+                    
+                    
+                 for (Item t : model.getItems()){
                 if (t instanceof Issue){
-                for (String line2 : t.toFullHTML(counter))
+                for (String line2 : t.toFullHTML())
                     page.add(line2 + "\n");
-                
-                counter++;
+               
                 }
-               }
-           }        
-         }
-            in.close();
+                 }
+                }   
+               
+                else
+                    if (line.startsWith("#projectlist")){
+                         for (Project p : model.getProjects()){
+               
+                for (String line2 : p.toHTML())
+                    page.add(line2 + "\n");
+                         }
+                    }
+                         
+                else
+                    page.add(line +"\n");
+      
+         
         }
+            in.close();
+        
+        } 
         catch (Exception ex){
             ex.printStackTrace();
         }

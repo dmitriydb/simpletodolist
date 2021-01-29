@@ -1,9 +1,9 @@
+
 package simpletodolist.view;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import simpletodolist.Item;
 import simpletodolist.Task;
 import simpletodolist.controller.ToDoController;
 import simpletodolist.model.ToDoModel;
@@ -13,33 +13,37 @@ import simpletodolist.webserver.ToDoSimpleWebServer;
  *
  * @author Dmitriy D
  */
-public class UpdatesView extends ToDoHTMLView{
+public class TaskView extends ToDoHTMLView{
     
-    public UpdatesView(ToDoModel model, ToDoController controller ){
+    private int editingIndex;
+    
+    public TaskView(int index, ToDoModel model, ToDoController controller ){
         super(model, controller);
+        editingIndex = index;
     }
     
-    public synchronized void createViewFromModel(){  
+    public int getIndex(){
+        return editingIndex;
+    }
+    
+    public synchronized void createViewFromModel(){
+        
+     
         try{
         page = new ArrayList<String>();
-        BufferedReader in = new BufferedReader(new FileReader("html/index.html"));
+        BufferedReader in = new BufferedReader(new FileReader("html/task1.html"));
             String line;
             while ((line = in.readLine()) != null){
-           
-                if (!line.startsWith("#list"))
-                    page.add(line +"\n");
-               else
-                {
-               int counter = 1;
-               for (Item t : model.getItems()){
-                for (String line2 : t.toUpdate())
-                    page.add(line2 + "\n");
-                
-                counter++;
-               }
-           }        
-         }
+                if (line.contains("#entry")){
+                   String[] lines = model.getItems()[editingIndex].toHTML();
+                   for (String x : lines)
+                       page.add(x);
+                }
+                 else
+                  page.add(line);
+            }
             in.close();
+         
         }
         catch (Exception ex){
             ex.printStackTrace();
@@ -49,7 +53,6 @@ public class UpdatesView extends ToDoHTMLView{
     }
     
     public void update(){
-        
         createViewFromModel();
     }
     

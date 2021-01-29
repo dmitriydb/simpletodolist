@@ -13,14 +13,14 @@ public class Task extends Item{
     }
     
     
-    public String[] toHTML(int id){
+    public String[] toHTML(){
      return new String[]{
      "<article class=task>",
      "<p>Task #" + id +": " + getText() +"</p>",
      "</article>"};
     }
     
-    public String[] toFullHTML(int id){
+    public String[] toFullHTML(){
      return new String[]{
       "<article class=task>",
         "<a href=\"task"+id+".html\"><p>Task#"+id+":"+ text+"</p></a>",
@@ -31,7 +31,7 @@ public class Task extends Item{
     }
     
     
-    public String[] toUpdate(int id){
+    public String[] toUpdate(){
           return new String[]{
               "<article class=\"updateItem\">",
    "<a href=\"update"+id+".html\"><p>Task#"+id+" added: " +text+ "<br><br>",
@@ -44,4 +44,3 @@ public class Task extends Item{
     
     
     
-}

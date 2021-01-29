@@ -14,7 +14,7 @@ public class Note extends Item{
     }
     
     
-    public String[] toHTML(int id){
+    public String[] toHTML(){
      return new String[]{
     "<article class=\"noteItem\">",
   "<p><b>" + title +"</b><br>" + getText() +"<br><br>",
@@ -22,7 +22,7 @@ public class Note extends Item{
 "</article>"};
 }          
     
-  public String[] toFullHTML(int id){
+  public String[] toFullHTML(){
      return new String[]{
    "<article class=\"noteItem\">",
     "<a href=\"note"+id+".html\"><p><b>" + title +"</b><br>"+getText()+"<br><br>",
@@ -33,7 +33,7 @@ public class Note extends Item{
   }
   
   
-  public String[] toUpdate(int id){
+  public String[] toUpdate(){
           return new String[]{
               "<article class=\"updateItem\">",
    "<a href=\"update"+id+".html\"><p>New note added: " +title+ "<br><br>",
