@@ -27,8 +27,8 @@ public class Note extends Item{
     public String[] toHTML(){
      return new String[]{
     "<article class=\"noteItem\">",
-  "<p><b>" + title +"</b><br>" + getText() +"<br><br>",
-  "<sub>22 января 2021<sub></p>",
+  "<p><b>" + title +"</b><br>" + getText() +"<br><br>" +
+  "<sub>" + timeStamp + "</sub></p>",
 "</article>"};
 }          
     
@@ -36,7 +36,7 @@ public class Note extends Item{
      return new String[]{
    "<article class=\"noteItem\">",
     "<a href=\"note"+id+".html\"><p><b>" + title +"</b><br>"+getText()+"<br><br>",
-    "<sub>"+timeStamp+"<sub></p></a>",
+    "<sub>"+timeStamp+"</sub></p></a>",
     "<div class=\"remove\"><a href=\"removenote"+id+"\">remove</a></div>",         
  "</article>"  
      };

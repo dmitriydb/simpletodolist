@@ -272,9 +272,9 @@
 </table>
 </section>
 #entry
-  <form action = "/savenote" method="get">
-    <input type="text" value="Заголовок" name="title"><br>
-    <textarea name = "note" rows="5" cols ="100">I’ve just wrapped my first calendar year with Stack Overflow, through which I’ve experienced the excitement and energy of a full fourth quarter, typically the busiest and most important period for the business. 2020 was a year full of challenges unlike anything we’ve seen in a century, and I’m proud to say that we met the challenge at hand.</textarea><br>
+  <form action = "/savenote#num" method="post">
+    <input type="text" value="#title" name="title"><br>
+    <textarea name = "note" rows="5" cols ="100">#text</textarea><br>
     <input type="submit" value="Save">
     <input type="button" onclick="location.href='notes.html';" value="Cancel" />
   </form>
@@ -282,4 +282,4 @@
 <footer>
 </footer>
 </body>
-</html
+</html>

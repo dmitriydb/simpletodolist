@@ -35,14 +35,16 @@ public class TasksView extends ToDoHTMLView {
             BufferedReader in = new BufferedReader(new FileReader("html/todolist.html"));
             String line;
             while ((line = in.readLine()) != null) {
+                 if (line.contains("#listnum")) {
                 line = line.replace("#listnum", String.valueOf(listID));
-                
-                
+                page.add(line);
+                 }
+                 else
                 if (line.startsWith("#listlist")) {
                     for (TodoList p : model.getLists()) {
 
                         for (String line2 : p.toHTML()) {
-                            page.add(line2 + "\n");
+                            page.add(line2);
                         }
                     }
                 } else if (line.startsWith("#list")) {
@@ -50,13 +52,13 @@ public class TasksView extends ToDoHTMLView {
                     for (Task t : model.getTasksFromList(listID)) {
                         
                             for (String line2 : t.toFullHTML()) {
-                                page.add(line2 + "\n");
+                                page.add(line2);
                             }
 
                         
                     }
                 } else {
-                    page.add(line + "\n");
+                    page.add(line);
 
                 }
             }

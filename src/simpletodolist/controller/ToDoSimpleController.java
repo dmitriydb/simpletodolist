@@ -32,7 +32,7 @@ public abstract class ToDoSimpleController implements ToDoController{
 
     
     public void removeItem(int index) {
-        model.removeItem(index);
+       
     }
 
     

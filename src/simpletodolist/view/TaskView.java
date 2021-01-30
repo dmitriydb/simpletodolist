@@ -31,11 +31,22 @@ public class TaskView extends ToDoHTMLView{
      
         try{
         page = new ArrayList<String>();
+        Task task = model.getTaskByID(editingIndex);
         BufferedReader in = new BufferedReader(new FileReader("html/task1.html"));
             String line;
             while ((line = in.readLine()) != null){
+                 if (line.contains("#num")){
+                    line = line.replace("#num", String.valueOf(editingIndex));
+                    page.add(line);
+                }
+                else
+                   if (line.contains("#text")){
+                    line = line.replace("#text", task.getText());
+                    page.add(line);
+                } 
+                else
                 if (line.contains("#entry")){
-                   String[] lines = model.getItems()[editingIndex].toHTML();
+                   String[] lines = task.toHTML();
                    for (String x : lines)
                        page.add(x);
                 }

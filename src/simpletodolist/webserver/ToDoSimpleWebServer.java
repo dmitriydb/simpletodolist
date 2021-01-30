@@ -20,6 +20,7 @@ import simpletodolist.view.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import simpletodolist.Issue;
@@ -138,19 +139,19 @@ public class ToDoSimpleWebServer{
                
                  else  if (resource.startsWith("/update")){
                   String name = resource.substring(7, resource.indexOf('.'));
-                showView(new UpdateView(Integer.valueOf(name) - 1, model, controller));
+                showView(new UpdateView(Integer.valueOf(name), model, controller));
               }
                  else  if (resource.startsWith("/task")){
                   String name = resource.substring(5, resource.indexOf('.'));
-                showView(new TaskView(Integer.valueOf(name) - 1, model, controller));
+                showView(new TaskView(Integer.valueOf(name), model, controller));
               }
                  else  if (resource.startsWith("/issue")){
                   String name = resource.substring(6, resource.indexOf('.'));
-                showView(new IssueView(Integer.valueOf(name) - 1, model, controller));
+                showView(new IssueView(Integer.valueOf(name), model, controller));
               }
                  else  if (resource.startsWith("/note")){
                   String name = resource.substring(5, resource.indexOf('.'));
-                showView(new NoteView(Integer.valueOf(name) - 1, model, controller));
+                showView(new NoteView(Integer.valueOf(name), model, controller));
               }
                else
                  if (resource.startsWith("/changelist")){
@@ -161,6 +162,21 @@ public class ToDoSimpleWebServer{
                    if (resource.startsWith("/changeproject")){
              String name = resource.substring(14);
              showView(new IssuesView(Integer.valueOf(name), model, controller));
+              }
+               else
+             if (resource.startsWith("/removetask")){ 
+             String name = resource.substring(11);
+             int index = Integer.valueOf(name);
+             int listID = model.getListIDByTaskID(index);
+             model.removeTask(index);
+             showView(new TasksView(listID, model, controller));
+              }
+               else
+             if (resource.startsWith("/removenote")){ 
+             String name = resource.substring(11);
+             int index = Integer.valueOf(name);
+             model.removeNote(index);
+             showView(new NotesView(model, controller));
               }
              
                
@@ -192,10 +208,20 @@ public class ToDoSimpleWebServer{
         Map<String,String> postFieldsMap = new HashMap<String, String>();
         String postFields[] = result.trim().split("&");
         for (String postField : postFields){
+            try{
             String[] values = postField.split("=");
             String key = values[0].trim();
             String value = values[1].trim();
+            System.out.println(key);
+            System.out.println(value);
+            
+            
             postFieldsMap.put(key, value);
+            }
+            catch (Exception ex){
+                in.close();
+                return;
+            }
         }
         System.out.println(postFieldsMap);
         if (postResource.equals("/addproject")){
@@ -212,7 +238,7 @@ public class ToDoSimpleWebServer{
          if (postResource.equals("/addnote")){
              String title = postFieldsMap.get("title");
              String text = postFieldsMap.get("note");
-             model.addItem(new Note(title, text));
+            model.addItem(new Note(title, text));
             showView(new NotesView(model, controller));
         }
          else
@@ -229,7 +255,36 @@ public class ToDoSimpleWebServer{
              model.addItemToList(new Issue(text, false), index);
             showView(new IssuesView(index, model, controller));
         }
-         
+        else
+         if (postResource.startsWith("/saveissue")){
+             int index = Integer.valueOf(postResource.substring(10));
+             String text = postFieldsMap.get("note");
+             String statusstr = postFieldsMap.get("status");
+             Boolean status = false;
+             if (statusstr.trim().equals("fixed")) status = true;
+             model.updateItem(index, new Issue(text, status));
+             int projectID = model.getProjectIDByIssueID(index);
+             showView(new IssuesView(projectID, model, controller));
+        }
+         else
+         if (postResource.startsWith("/savetask")){
+             int index = Integer.valueOf(postResource.substring(9));
+             String text = postFieldsMap.get("task");    
+             model.updateItem(index, new Task(text));
+             int listID = model.getListIDByTaskID(index);
+             showView(new TasksView(listID, model, controller));
+        }
+        else
+         if (postResource.startsWith("/savenote")){
+             int index = Integer.valueOf(postResource.substring(9));
+             String text = postFieldsMap.get("note");    
+             String title = postFieldsMap.get("title");    
+             
+             model.updateItem(index, new Note(title, text));
+            
+             showView(new NotesView(model, controller));
+        }
+        
         
        }
        in.close();

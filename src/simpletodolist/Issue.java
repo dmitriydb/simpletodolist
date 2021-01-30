@@ -29,7 +29,7 @@ public class Issue extends Item{
      String st = status?"fixed":"not fixed";
         return new String[]{   
      "<article class=issue>",
-     "<p>Issue#" + id + ":" + getText()+"<br> Status:<strong>"+ st +"</strong></p>",
+     "<p>" + getText()+"<br> Status:<strong>"+ st +"</strong></p>",
      "</article>"
     };
         
@@ -39,7 +39,7 @@ public class Issue extends Item{
      String st = status?"<span style=\"color:green\"><strong>fixed</strong></span>":"<span style=\"color:red\"><strong>not fixed</strong></span>";
         return new String[]{   
         "<article class=issue>",
-        "<a href=\"issue"+id+".html\"><p>Issue#"+id+": " +getText()+"<br> Status: "+st+"</p></a>",
+        "<a href=\"issue"+id+".html\"><p>" +getText()+"<br> Status: "+st+"</p></a>",
      "</article>"
     };
       }
@@ -47,7 +47,7 @@ public class Issue extends Item{
       public String[] toUpdate(){
           return new String[]{
               "<article class=\"updateItem\">",
-   "<a href=\"update"+id+".html\"><p>New issue added: " +text+ "<br><br>",
+   "<a href=\"issue"+id+".html\"><p>New issue added: " +text+ "<br><br>",
     "<sub>"+timeStamp+"<sub></p></a>",
   "</article>"};
     }

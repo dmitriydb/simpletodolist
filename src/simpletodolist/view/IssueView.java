@@ -4,6 +4,7 @@ package simpletodolist.view;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import simpletodolist.Issue;
 import simpletodolist.Task;
 import simpletodolist.controller.ToDoController;
 import simpletodolist.model.ToDoModel;
@@ -30,12 +31,28 @@ public class IssueView extends ToDoHTMLView{
         
      
         try{
+        Issue issue = model.getIssueByID(editingIndex);           
         page = new ArrayList<String>();
         BufferedReader in = new BufferedReader(new FileReader("html/issue1.html"));
             String line;
+            
             while ((line = in.readLine()) != null){
+                if (line.contains("#num")){
+                    line = line.replace("#num", String.valueOf(editingIndex));
+                    page.add(line);
+                }
+                else
+               
+                if (line.contains("#text")){
+                    line = line.replace("#text", issue.getText());
+                    page.add(line);
+                }
+                else
+                
                 if (line.contains("#entry")){
-                   String[] lines = model.getItems()[editingIndex].toHTML();
+                   
+                    
+                   String[] lines = issue.toHTML();
                    for (String x : lines)
                        page.add(x);
                 }

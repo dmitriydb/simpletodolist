@@ -22,7 +22,7 @@ public class ToDoSimpleModel implements ToDoModel{
     
     // JDBC driver name and database URL
    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-   static final String DB_URL = "jdbc:mysql://localhost/todolistbase";
+   static final String DB_URL = "jdbc:mysql://localhost:3306/todolistbase?useUnicode=yes&characterEncoding=UTF-8";
 
    //  Database credentials
    static final String USER = "todolist";
@@ -326,8 +326,37 @@ public class ToDoSimpleModel implements ToDoModel{
 
     
     public void updateItem (int index, Item newItem){
-        itemList.set(index, newItem);
-        notifyAllListeners();
+       try {
+           String currentTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
+           Statement st = conn.createStatement();
+           String query = "";
+           if (newItem instanceof Task)
+               query = "UPDATE tasks SET text = '"+newItem.getText()+"', time = '"+currentTime+"'"
+                       + " WHERE id = " + index;
+           
+            if (newItem instanceof Issue){
+                Issue x = (Issue)newItem;
+                int status = 0;
+                if (x.getStatus()) status = 1;
+               query = "UPDATE issues SET text = '"+newItem.getText()+"', time = '"+
+                       currentTime+"', status = " + status + " WHERE id = " + index;
+            }
+           
+             if (newItem instanceof Note){
+                Note x = (Note)newItem;
+               query = "UPDATE notes SET title = '" + x.getTitle() +"', text = '"+newItem.getText()+"', time = '"+
+                       currentTime+"' WHERE id = " + index;
+            }
+            
+           st.executeUpdate(query);
+           st.close();
+           System.out.println(query);
+           
+           
+           notifyAllListeners();
+       } catch (SQLException ex) {
+           Logger.getLogger(ToDoSimpleModel.class.getName()).log(Level.SEVERE, null, ex);
+       }
     }
     
     public Item[] getItems(){
@@ -349,11 +378,17 @@ public class ToDoSimpleModel implements ToDoModel{
            rs = st.executeQuery(sql);
            
            while (rs.next()){
-               String text = rs.getString("text");
+               try{
+              Blob blob = rs.getBlob("text");
+              byte byteArray[] = blob.getBytes(1,(int)blob.length());
+              String text = new String(byteArray, "UTF-8"); // As it claimed to be Base64
                int id = rs.getInt("id");
                String timeStamp = rs.getString("time");
                String title = rs.getString("title");
-              result.add(new Note(id, title, text, timeStamp));
+              result.add(new Note(id, title, text, timeStamp));}
+               catch (Exception ex){
+                   
+               }
            
            }
            
@@ -361,12 +396,18 @@ public class ToDoSimpleModel implements ToDoModel{
            rs = st.executeQuery(sql);
            
            while (rs.next()){
-               String text = rs.getString("text");
+               try{
+                 Blob blob = rs.getBlob("text");
+              byte byteArray[] = blob.getBytes(1,(int)blob.length());
+              String text = new String(byteArray, "UTF-8"); // As it claimed to be Base64
                int id = rs.getInt("id");
                String timeStamp = rs.getString("time");
                Boolean isFixed = rs.getBoolean("status");
               result.add(new Issue(id, text, timeStamp, isFixed));
-           
+               }
+               catch (Exception ex){
+                   
+               }
            }
            st.close();
            
@@ -393,8 +434,7 @@ public class ToDoSimpleModel implements ToDoModel{
           
       System.out.println("Connecting to database...");
       conn = DriverManager.getConnection(
-               "jdbc:mysql://localhost:3306/todolistbase?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
-               "todolist", "todolist");   // For MySQL only
+               DB_URL, USER, PASS);   // For MySQL only
           
       System.out.println("Creating statement...");
       stmt = conn.createStatement();
@@ -410,6 +450,7 @@ public class ToDoSimpleModel implements ToDoModel{
       
       if (!hasEqual){
       sql = "INSERT into projects (name) values ('"+name+"');";
+      System.out.println(sql);
       stmt.executeUpdate(sql);}
       
       stmt.close();
@@ -473,13 +514,19 @@ public class ToDoSimpleModel implements ToDoModel{
            System.out.println(query);
            ResultSet rs = st.executeQuery(query);
            while (rs.next()){
+               try{
                int tid = rs.getInt("id");
-               String text = rs.getString("text");
+              Blob blob = rs.getBlob("text");
+              byte byteArray[] = blob.getBytes(1,(int)blob.length());
+              String text = new String(byteArray, "UTF-8"); // As it claimed to be Base64
                String time = rs.getString("time"); 
                int status = rs.getInt("status");
                Boolean sta = (status == 1)? true: false;
                    
-               result.add(new Issue(tid, text, time, sta));
+               result.add(new Issue(tid, text, time, sta));}
+               catch (Exception ex){
+                   
+               }
            }
        } catch (SQLException ex) {
            Logger.getLogger(ToDoSimpleModel.class.getName()).log(Level.SEVERE, null, ex);
@@ -488,6 +535,165 @@ public class ToDoSimpleModel implements ToDoModel{
         Issue[] res = new Issue[result.size()];
         result.toArray(res);
         return res;}
+
+    @Override
+    public Issue getIssueByID(int id) {
+       try {
+           Statement st = conn.createStatement();
+           String query = "SELECT * FROM issues WHERE id = '"+id+"';";
+           System.out.println(query);
+           ResultSet rs = st.executeQuery(query);
+           while (rs.next()){
+               try{
+               int sid = rs.getInt("id");
+               int statusint = rs.getInt("status");
+               String time = rs.getString("time");
+                 Blob blob = rs.getBlob("text");
+              byte byteArray[] = blob.getBytes(1,(int)blob.length());
+              String text = new String(byteArray, "UTF-8"); // As it claimed to be Base64
+               boolean status;
+               if (statusint == 0) status = false;
+               else status = true;
+               return new Issue(sid, text, time, status);
+               }
+               catch (Exception ex){
+                   ex.printStackTrace();
+               }
+           }
+                   
+                   
+       } catch (SQLException ex) {
+           Logger.getLogger(ToDoSimpleModel.class.getName()).log(Level.SEVERE, null, ex);
+       }
+       return null;
+    }
+
+    @Override
+    public Task getTaskByID(int id) {
+    try {
+           Statement st = conn.createStatement();
+           String query = "SELECT * FROM tasks WHERE id = '"+id+"';";
+           System.out.println(query);
+           ResultSet rs = st.executeQuery(query);
+           while (rs.next()){
+               int sid = rs.getInt("id");
+               String time = rs.getString("time");
+               String text = rs.getString("text");
+               boolean status;
+               return new Task(sid, text, time);
+           }
+                   
+                   
+       } catch (SQLException ex) {
+           Logger.getLogger(ToDoSimpleModel.class.getName()).log(Level.SEVERE, null, ex);
+       }
+       return null;
+    
+    }
+
+    @Override
+    public Note getNoteByID(int id) {
+   try {
+           Statement st = conn.createStatement();
+           String query = "SELECT * FROM notes WHERE id = '"+id+"';";
+           System.out.println(query);
+           ResultSet rs = st.executeQuery(query);
+           while (rs.next()){
+               try{
+               int sid = rs.getInt("id");
+               String time = rs.getString("time");
+                Blob blob = rs.getBlob("text");
+              byte byteArray[] = blob.getBytes(1,(int)blob.length());
+              String text = new String(byteArray, "UTF-8"); // As it claimed to be Base64
+               String title = rs.getString("title");
+               return new Note(sid, title, text, time);
+               }
+               catch (Exception ex){
+                   ex.printStackTrace();
+               }
+           }
+                   
+                   
+       } catch (SQLException ex) {
+           Logger.getLogger(ToDoSimpleModel.class.getName()).log(Level.SEVERE, null, ex);
+       }
+       return null;
+    
+    
+    }
+
+    @Override
+    public int getProjectIDByIssueID(int id) {
+       try {
+           Statement st = conn.createStatement();
+           String query = "SELECT project_id from issues_in_projects where issue_id = " + id;
+           System.out.println(query);
+           ResultSet rs = st.executeQuery(query);
+           while (rs.next()){
+               int prID = rs.getInt("project_id");
+               return prID;
+           }
+       
+       } catch (SQLException ex) {
+           Logger.getLogger(ToDoSimpleModel.class.getName()).log(Level.SEVERE, null, ex);
+       }
+       
+       return -1;
+    }
+
+    @Override
+    public int getListIDByTaskID(int id) {
+       try {
+           Statement st = conn.createStatement();
+           String query = "SELECT list_id from tasks_in_lists where task_id = " + id;
+           System.out.println(query);
+           ResultSet rs = st.executeQuery(query);
+           while (rs.next()){
+               int prID = rs.getInt("list_id");
+               return prID;
+           }
+       
+       } catch (SQLException ex) {
+           Logger.getLogger(ToDoSimpleModel.class.getName()).log(Level.SEVERE, null, ex);
+       }
+       
+       return -1;
+    
+    }
+
+    @Override
+    public void removeTask(int id) {
+       try {
+           Statement st = conn.createStatement();
+           String query = "delete from tasks_in_lists where task_id = " + id;
+           System.out.println(query);
+           st.executeUpdate(query);
+           query = "delete from tasks where id = " + id;
+           System.out.println(query);
+           st.executeUpdate(query);
+           
+           
+       } catch (SQLException ex) {
+           Logger.getLogger(ToDoSimpleModel.class.getName()).log(Level.SEVERE, null, ex);
+       }
+        
+    }
+
+    @Override
+    public void removeNote(int id) {
+     try {
+           Statement st = conn.createStatement();
+           String query = "delete from notes where id = " + id;
+           System.out.println(query);
+           st.executeUpdate(query);
+           
+           
+       } catch (SQLException ex) {
+           Logger.getLogger(ToDoSimpleModel.class.getName()).log(Level.SEVERE, null, ex);
+       }
+        
+    
+    }
     
     
     
