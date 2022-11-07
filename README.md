@@ -14,6 +14,8 @@ psql -U postgres -a -f schema.sql
 mvn compile exec:java -Dexec.mainClass=simpletodolist.SimpleToDoList
 ```
 
+Then open 'localhost:8081' in browser
+
 ### Features
 #### To-do tasks and lists
 ![Example](https://files.catbox.moe/5befse.png)
