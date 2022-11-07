@@ -10,7 +10,7 @@
 ```
 git clone https://github.com/dmitriydb/simpletodolist
 cd simpletodolist 
-psql -U postgres -a -f schema.sql;
+psql -U postgres -a -f schema.sql
 mvn compile exec:java -Dexec.mainClass=simpletodolist.SimpleToDoList
 ```
 
