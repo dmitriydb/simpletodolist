@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="style/style.css">
+     <meta charset="UTF-8">
+     <style>
+
+     header{
+       background-color: Aquamarine;
+       margin-top: -20px;
+       margin-left: -8px;
+       margin-right: -8px;
+       position: relative;
+       padding:0;
+       overflow: auto;
+       font-family: Helvetica
+
+     }
+
+     header h1{
+       text-align: center;
+     }
+
+     #navbar table{
+       width : 100%;
+       margin: 0;
+       border-spacing: 0;
+
+     }
+     #navbar tr{
+       background-color: BlanchedAlmond;
+       width: 100%;
+     }
+
+     #navbar td{
+
+       margin: 0;
+     }
+
+     #navbar a{
+       color: black;
+      text-decoration: none;
+     }
+
+     #navbar a:hover{
+       color: LightCoral;
+       text-decoration: none;
+     }
+
+
+
+     .updateItem p{
+       padding-left: 5px;
+       margin-left: -5px;
+       margin-bottom: 1px;
+       margin-top: 5px;
+       background-color: LightCyan;
+       border-radius: 10px;
+       border: 1px solid;
+     }
+
+     .updateItem a{
+       color: black;
+      text-decoration: none;
+     }
+
+     .updateItem p:hover{
+       background-color: LemonChiffon;
+       text-decoration: none;
+     }
+
+     /* todolist.html */
+
+     #todoTable{
+       width:100%;
+       border-spacing:10px;
+     }
+
+     .lists {
+       width:25%;
+       text-align: right;
+       margin-right: 50px;
+       vertical-align: top;
+       text-align: center;
+     }
+
+
+
+     .lists a{
+       width: 100%;
+       height: 100%;
+       display: block;
+       color:black;
+       text-decoration: none;
+
+     }
+
+     .tasks{
+       vertical-align: top;
+     }
+
+
+     .tasks a{
+       width: 100%;
+       height: 100%;
+       display: block;
+       color:black;
+       text-decoration: none;
+     }
+
+
+     .list {
+       background-color: LightSkyBlue;
+       border:1px solid;
+       border-radius: 5px;
+       width: 100%;
+       margin-bottom: 5px;
+     }
+
+     .list:hover{
+       background-color: LemonChiffon;
+     }
+
+     .task {
+         background-color: LightCyan;
+       border:1px solid;
+       border-radius: 5px;
+       width: 100%;
+       padding-left: 5px;
+     }
+
+     .task a{
+       height:100%;
+       width:100%;
+     }
+
+     /* remove button */
+     .task div{
+       background-color: LightPink;
+       padding: 0;
+       margin: 0;
+       width:10%;
+       text-align: center;
+       font-size: 0.7em;
+     }
+
+     .task div:hover{
+       background-color: LightCoral;
+     }
+
+
+
+     /* notes.html */
+
+     .noteItem p{
+       padding-left: 5px;
+       margin-left: -5px;
+       margin-bottom: 1px;
+       margin-top: 5px;
+       background-color: LightCyan;
+       border-radius: 10px;
+       border: 1px solid;
+     }
+
+     .noteItem a{
+       color: black;
+      text-decoration: none;
+     }
+
+     .noteItem p:hover{
+       background-color: LemonChiffon;
+       text-decoration: none;
+     }
+
+     .noteItem div{
+       background-color: LightPink;
+       padding: 0;
+       margin: 0;
+       width:10%;
+       text-align: center;
+       font-size: 0.7em;
+       height:1.2em;
+     }
+
+     .noteItem div:hover{
+       background-color: LightCoral;
+     }
+
+
+     /* bugtracker.html */
+
+
+     #bugtrackerTable{
+       width:100%;
+       border-spacing:10px;
+     }
+
+     .projects {
+       width:25%;
+       text-align: right;
+       margin-right: 50px;
+       vertical-align: top;
+       text-align: center;
+     }
+
+
+
+     .projects a{
+       width: 100%;
+       height: 100%;
+       display: block;
+       color:black;
+       text-decoration: none;
+
+     }
+
+     .issues{
+       vertical-align: top;
+     }
+
+
+     .issues a{
+       width: 100%;
+       height: 100%;
+       display: block;
+       color:black;
+       text-decoration: none;
+     }
+
+
+     .project {
+       background-color: LightSkyBlue;
+       border:1px solid;
+       border-radius: 5px;
+       width: 100%;
+       margin-bottom: 5px;
+     }
+
+     .project:hover{
+       background-color: LemonChiffon;
+     }
+
+     .issue {
+         background-color: LightCyan;
+       border:1px solid;
+       border-radius: 5px;
+       width: 100%;
+       padding-left: 5px;
+     }
+
+     .issue a{
+       height:100%;
+       width:100%;
+     }
+
+     </style>
+</head>
+<body>
+<header>
+  <div>
+  <h1>Task #1</h1>
+</div>
+</header>
+<section id="navbar">
+<table>
+<tr>
+  <th><a href="index.html">Updates</a></th>
+  <th><a href="todolist.html">TODO List</a></th>
+  <th><a href="notes.html">Notes</a></th>
+  <th><a href="bugtracker.html">Bugtracker</a></th>
+</tr>
+</table>
+</section>
+#entry
+  <form action = "/savetask#num" method="post">
+    <input type="text" name="task" value ="#text">
+    <br>
+    <input type="submit" value="Save">
+    <input type="button" onclick="location.href='todolist.html';" value="Cancel" />
+  </form>
+<footer>
+</footer>
+</body>
+</html>
