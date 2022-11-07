@@ -2,7 +2,7 @@
 
 - simple http server written on java.net sockets (processes GET/POST http requests)
 - MVC architecture
-- persists data in a MySQL database via JDBC 
+- persists data in a Postgres database via JDBC 
 - custom HTML template engine for view
 
 ### How to run development build
@@ -14,7 +14,7 @@ psql -U postgres -a -f schema.sql
 mvn compile exec:java -Dexec.mainClass=simpletodolist.SimpleToDoList
 ```
 
-Then open 'localhost:8081' in browser
+Then open ```localhost:8081``` in browser
 
 ### Features
 #### To-do tasks and lists
